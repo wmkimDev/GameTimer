@@ -1,4 +1,4 @@
-using GameTimer.Core;
+using GameTimer.Abstractions;
 
 namespace GameTimer.Clocks;
 

@@ -105,4 +105,15 @@ public readonly struct TimeOfDay : IEquatable<TimeOfDay>, IComparable<TimeOfDay>
     public static bool operator >=(TimeOfDay left, TimeOfDay right) => left.CompareTo(right) >= 0;
 
     #endregion
+    
+    public TimeOfDay Set(int? hour = null, int? minute = null, 
+        int? second = null, int? millisecond = null)
+    {
+        return new TimeOfDay(
+            hour ?? Hour,
+            minute ?? Minute, 
+            second ?? Second,
+            millisecond ?? Millisecond
+        );
+    }
 }

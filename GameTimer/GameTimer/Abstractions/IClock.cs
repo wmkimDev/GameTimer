@@ -1,4 +1,4 @@
-namespace GameTimer.Core;
+namespace GameTimer.Abstractions;
 
 public interface IClock
 {
