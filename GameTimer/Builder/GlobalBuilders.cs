@@ -27,6 +27,7 @@ public sealed class GlobalDailyBuilder
 {
     private readonly IClock _clock;
     private TimeOfDay _time = new(0, 0, 0);
+    private TimeSpan? _latency;
 
     public GlobalDailyBuilder(IClock clock)
     {
@@ -45,7 +46,18 @@ public sealed class GlobalDailyBuilder
         return this;
     }
 
-    public GlobalEveryDayTimer Build() => new(_clock, _time);
+    public GlobalDailyBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
+    public GlobalEveryDayTimer Build()
+    {
+        var t = new GlobalEveryDayTimer(_clock, _time);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
+    }
 }
 
 public sealed class GlobalWeeklyBuilder
@@ -53,6 +65,7 @@ public sealed class GlobalWeeklyBuilder
     private readonly IClock _clock;
     private DayOfWeekFlag _days = 0;
     private TimeOfDay _time = new(0, 0, 0);
+    private TimeSpan? _latency;
 
     public GlobalWeeklyBuilder(IClock clock)
     {
@@ -77,7 +90,18 @@ public sealed class GlobalWeeklyBuilder
         return this;
     }
 
-    public GlobalEveryWeekTimer Build() => new(_clock, _days, _time);
+    public GlobalWeeklyBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
+    public GlobalEveryWeekTimer Build()
+    {
+        var t = new GlobalEveryWeekTimer(_clock, _days, _time);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
+    }
 }
 
 public sealed class GlobalMonthlyBuilder
@@ -85,6 +109,7 @@ public sealed class GlobalMonthlyBuilder
     private readonly IClock _clock;
     private int _dayOfMonth = 1;
     private TimeOfDay _time = new(0, 0, 0);
+    private TimeSpan? _latency;
 
     public GlobalMonthlyBuilder(IClock clock)
     {
@@ -115,13 +140,25 @@ public sealed class GlobalMonthlyBuilder
         return this;
     }
 
-    public GlobalEveryMonthTimer Build() => new(_clock, _dayOfMonth, _time);
+    public GlobalMonthlyBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
+    public GlobalEveryMonthTimer Build()
+    {
+        var t = new GlobalEveryMonthTimer(_clock, _dayOfMonth, _time);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
+    }
 }
 
 public sealed class GlobalMultipleTimesBuilder
 {
     private readonly IClock _clock;
     private TimeOfDay[]? _times;
+    private TimeSpan? _latency;
 
     public GlobalMultipleTimesBuilder(IClock clock)
     {
@@ -140,12 +177,19 @@ public sealed class GlobalMultipleTimesBuilder
         return this;
     }
 
+    public GlobalMultipleTimesBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
     public GlobalMultipleTimesTimer Build()
     {
         if (_times == null || _times.Length == 0)
             throw new InvalidOperationException("At least one reset time must be provided.");
 
-        return new GlobalMultipleTimesTimer(_clock, _times);
+        var t = new GlobalMultipleTimesTimer(_clock, _times);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
     }
 }
-

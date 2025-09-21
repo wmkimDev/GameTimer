@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GameTimer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+60ab68e8f59970707f4750763058f403db357395")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e22788d8f970fb5302f97f99383387684af1a436")]
 [assembly: System.Reflection.AssemblyProductAttribute("GameTimer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GameTimer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

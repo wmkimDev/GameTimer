@@ -23,13 +23,20 @@ public static class LocalTimers
 public sealed class LocalDailyBuilder
 {
     private readonly IClock _clock;
-    private readonly DstPolicy _policy;
+    private DstPolicy _policy;
     private TimeOfDay _time = new(0, 0, 0);
+    private TimeSpan? _latency;
 
-    public LocalDailyBuilder(IClock clock, DstPolicy policy)
+    public LocalDailyBuilder(IClock clock, DstPolicy policy = DstPolicy.NextValid)
     {
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         _policy = policy;
+    }
+
+    public LocalDailyBuilder WithPolicy(DstPolicy policy)
+    {
+        _policy = policy;
+        return this;
     }
 
     public LocalDailyBuilder At(int hour, int minute = 0, int second = 0)
@@ -44,20 +51,38 @@ public sealed class LocalDailyBuilder
         return this;
     }
 
-    public LocalEveryDayTimer Build() => new(_clock, _time, _policy);
+    public LocalDailyBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
+    public LocalEveryDayTimer Build()
+    {
+        var t = new LocalEveryDayTimer(_clock, _time, _policy);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
+    }
 }
 
 public sealed class LocalWeeklyBuilder
 {
     private readonly IClock _clock;
-    private readonly DstPolicy _policy;
+    private DstPolicy _policy;
     private DayOfWeekFlag _days = 0;
     private TimeOfDay _time = new(0, 0, 0);
+    private TimeSpan? _latency;
 
-    public LocalWeeklyBuilder(IClock clock, DstPolicy policy)
+    public LocalWeeklyBuilder(IClock clock, DstPolicy policy = DstPolicy.NextValid)
     {
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         _policy = policy;
+    }
+
+    public LocalWeeklyBuilder WithPolicy(DstPolicy policy)
+    {
+        _policy = policy;
+        return this;
     }
 
     public LocalWeeklyBuilder On(DayOfWeekFlag days)
@@ -78,20 +103,38 @@ public sealed class LocalWeeklyBuilder
         return this;
     }
 
-    public LocalEveryWeekTimer Build() => new(_clock, _days, _time, _policy);
+    public LocalWeeklyBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
+    public LocalEveryWeekTimer Build()
+    {
+        var t = new LocalEveryWeekTimer(_clock, _days, _time, _policy);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
+    }
 }
 
 public sealed class LocalMonthlyBuilder
 {
     private readonly IClock _clock;
-    private readonly DstPolicy _policy;
+    private DstPolicy _policy;
     private int _dayOfMonth = 1;
     private TimeOfDay _time = new(0, 0, 0);
+    private TimeSpan? _latency;
 
-    public LocalMonthlyBuilder(IClock clock, DstPolicy policy)
+    public LocalMonthlyBuilder(IClock clock, DstPolicy policy = DstPolicy.NextValid)
     {
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         _policy = policy;
+    }
+
+    public LocalMonthlyBuilder WithPolicy(DstPolicy policy)
+    {
+        _policy = policy;
+        return this;
     }
 
     public LocalMonthlyBuilder On(int dayOfMonth)
@@ -118,19 +161,37 @@ public sealed class LocalMonthlyBuilder
         return this;
     }
 
-    public LocalEveryMonthTimer Build() => new(_clock, _dayOfMonth, _time, _policy);
+    public LocalMonthlyBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+
+    public LocalEveryMonthTimer Build()
+    {
+        var t = new LocalEveryMonthTimer(_clock, _dayOfMonth, _time, _policy);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
+    }
 }
 
 public sealed class LocalMultipleTimesBuilder
 {
     private readonly IClock _clock;
-    private readonly DstPolicy _policy;
+    private DstPolicy _policy;
     private TimeOfDay[]? _times;
+    private TimeSpan? _latency;
 
-    public LocalMultipleTimesBuilder(IClock clock, DstPolicy policy)
+    public LocalMultipleTimesBuilder(IClock clock, DstPolicy policy = DstPolicy.NextValid)
     {
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         _policy = policy;
+    }
+
+    public LocalMultipleTimesBuilder WithPolicy(DstPolicy policy)
+    {
+        _policy = policy;
+        return this;
     }
 
     public LocalMultipleTimesBuilder At(params TimeOfDay[] times)
@@ -145,13 +206,20 @@ public sealed class LocalMultipleTimesBuilder
         return this;
     }
 
+    public LocalMultipleTimesBuilder WithLatency(TimeSpan latency)
+    {
+        _latency = latency;
+        return this;
+    }
+    
     public LocalMultipleTimesTimer Build()
     {
         if (_times == null || _times.Length == 0)
             throw new InvalidOperationException("At least one reset time must be provided.");
 
         // Use the policy-aware ctor overload to avoid params ambiguity
-        return new LocalMultipleTimesTimer(_clock, _policy, _times);
+        var t                            = new LocalMultipleTimesTimer(_clock, _policy, _times);
+        if (_latency.HasValue) t.Latency = _latency.Value;
+        return t;
     }
 }
-
