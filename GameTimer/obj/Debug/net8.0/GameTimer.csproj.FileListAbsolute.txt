@@ -1,0 +1,12 @@
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\bin\Debug\net8.0\GameTimer.deps.json
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\bin\Debug\net8.0\GameTimer.dll
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\bin\Debug\net8.0\GameTimer.pdb
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.AssemblyInfo.cs
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.sourcelink.json
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.dll
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\refint\GameTimer.dll
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\GameTimer.pdb
+C:\Users\user\Desktop\Git\GameTimer\GameTimer\obj\Debug\net8.0\ref\GameTimer.dll

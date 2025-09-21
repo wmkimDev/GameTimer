@@ -79,7 +79,7 @@ public readonly struct TimeOfDay : IEquatable<TimeOfDay>, IComparable<TimeOfDay>
         return Hour == other.Hour && Minute == other.Minute && 
                Second == other.Second && Millisecond == other.Millisecond;
     }
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is TimeOfDay other && Equals(other);
     }
