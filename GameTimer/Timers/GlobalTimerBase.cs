@@ -34,4 +34,7 @@ public abstract class GlobalTimerBase : IGlobalTimer
         var remaining = nextUtc - Clock.UtcNow;
         return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
     }
+    
+    public DateTime NextUpcomingResetUtc() => NextResetUtc(Clock.UtcNow);
+    public TimeSpan TimeUntilUpcomingReset() => TimeUntilReset(Clock.UtcNow);
 }

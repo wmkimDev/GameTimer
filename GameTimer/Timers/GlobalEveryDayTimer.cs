@@ -24,12 +24,19 @@ public sealed class GlobalEveryDayTimer : GlobalTimerBase
     {
         TimerHelpers.ValidateUtc(lastUtc, nameof(lastUtc));
 
-        // UTC 기준으로 직접 계산 (타임존 변환 없음)
-        var todayResetUtc = new DateTime(
+        var sameDayReset = new DateTime(
             lastUtc.Year, lastUtc.Month, lastUtc.Day,
             _resetTimeUtc.Hour, _resetTimeUtc.Minute, _resetTimeUtc.Second,
             DateTimeKind.Utc);
-            
-        return lastUtc <= todayResetUtc ? todayResetUtc : todayResetUtc.AddDays(1);
+
+        if (sameDayReset <= lastUtc)
+            return sameDayReset.AddDays(1);
+
+        return sameDayReset;
     }
+
+    /// <summary>
+    /// 설정된 UTC 리셋 시각
+    /// </summary>
+    public TimeOfDay ResetTimeUtc => _resetTimeUtc;
 }

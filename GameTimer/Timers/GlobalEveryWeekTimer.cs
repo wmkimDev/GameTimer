@@ -19,25 +19,33 @@ public sealed class GlobalEveryWeekTimer : GlobalTimerBase
         _resetDays    = resetDays;
         _resetTimeUtc = resetTimeUtc;
     }
+    
+    public GlobalEveryWeekTimer(IClock clock, DayOfWeekFlag resetDays, int hour, int minute = 0, int second = 0)
+        : this(clock, resetDays, new TimeOfDay(hour, minute, second))
+    {
+    }
 
     public override DateTime NextResetUtc(DateTime lastUtc)
     {
         TimerHelpers.ValidateUtc(lastUtc, nameof(lastUtc));
 
-        for (int i = 0; i < 14; i++)
+        var startDate = lastUtc.Date;
+
+        for (int i = 0; i <= 7; i++)
         {
-            var candidate = lastUtc.Date.AddDays(i);
-            var candidateReset = new DateTime(
-                candidate.Year, candidate.Month, candidate.Day,
+            var d = startDate.AddDays(i);
+            if (!_resetDays.Contains(d.DayOfWeek))
+                continue;
+
+            var candidate = new DateTime(
+                d.Year, d.Month, d.Day,
                 _resetTimeUtc.Hour, _resetTimeUtc.Minute, _resetTimeUtc.Second,
                 DateTimeKind.Utc);
-                
-            if (_resetDays.Contains(candidate.DayOfWeek) && lastUtc <= candidateReset)
-            {
-                return candidateReset;
-            }
+
+            if (candidate > lastUtc)
+                return candidate;
         }
-            
+
         throw new InvalidOperationException("Could not find next weekly reset");
     }
 }

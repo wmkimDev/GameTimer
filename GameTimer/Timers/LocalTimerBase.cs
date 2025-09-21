@@ -8,12 +8,16 @@ using GameTimer.Abstractions;
 /// </summary>
 public abstract class LocalTimerBase : ILocalTimer
 {
-    protected readonly IClock   Clock;
-    public             TimeSpan Latency { get; set; } = TimeSpan.FromSeconds(2);
+    protected readonly IClock    Clock;
+    protected readonly DstPolicy Policy;
+    public             TimeSpan  Latency { get; set; } = TimeSpan.FromSeconds(2);
+    
+    public DstPolicy CurrentPolicy => Policy;
 
-    protected LocalTimerBase(IClock clock)
+    protected LocalTimerBase(IClock clock, DstPolicy policy = DstPolicy.NextValid)
     {
-        Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+        Clock  = clock ?? throw new ArgumentNullException(nameof(clock));
+        Policy = policy;
     }
 
     public abstract DateTime NextResetUtc(DateTime lastUtc, TimeZoneInfo timeZone);
@@ -36,4 +40,7 @@ public abstract class LocalTimerBase : ILocalTimer
         var remaining = nextUtc - Clock.UtcNow;
         return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
     }
+    
+    public DateTime NextUpcomingResetUtc(TimeZoneInfo tz) => NextResetUtc(Clock.UtcNow, tz);
+    public TimeSpan TimeUntilUpcomingReset(TimeZoneInfo tz) => TimeUntilReset(Clock.UtcNow, tz);
 }
