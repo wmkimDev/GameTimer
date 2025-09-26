@@ -6,6 +6,8 @@ namespace GameTimer.Common;
 [Flags]
 public enum DayOfWeekFlag : int
 {
+    /// <summary>미지정</summary>
+    None = 0,
     /// <summary>일요일</summary>
     Sunday = 1 << 0,
     /// <summary>월요일</summary>

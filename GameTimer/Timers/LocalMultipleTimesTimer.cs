@@ -10,21 +10,15 @@ public sealed class LocalMultipleTimesTimer : LocalTimerBase
 {
     private readonly TimeOfDay[] _resetTimes;
 
-    public LocalMultipleTimesTimer(IClock clock, params TimeOfDay[] resetTimes) : base(clock)
+    public LocalMultipleTimesTimer(IClock clock, params TimeOfDay[] resetTimes)
+        : this(clock, DstPolicy.NextValid, resetTimes)
     {
-        if (resetTimes == null || resetTimes.Length == 0)
-            throw new ArgumentException("At least one reset time must be specified", nameof(resetTimes));
-
-        _resetTimes = resetTimes.OrderBy(t => t).ToArray();
     }
 
     // 정책 지정 가능한 오버로드 (params 특성상 policy를 앞에 둠)
     public LocalMultipleTimesTimer(IClock clock, DstPolicy policy, params TimeOfDay[] resetTimes) : base(clock, policy)
     {
-        if (resetTimes == null || resetTimes.Length == 0)
-            throw new ArgumentException("At least one reset time must be specified", nameof(resetTimes));
-
-        _resetTimes = resetTimes.OrderBy(t => t).ToArray();
+        _resetTimes = PrepareResetTimes(resetTimes, nameof(resetTimes));
     }
 
     /// <summary>
@@ -33,13 +27,15 @@ public sealed class LocalMultipleTimesTimer : LocalTimerBase
     /// <param name="clock">시계 인스턴스</param>
     /// <param name="hours">시간 배열 (0-23)</param>
     public LocalMultipleTimesTimer(IClock clock, params int[] hours) 
-        : this(clock, hours.Select(h => new TimeOfDay(h, 0, 0)).ToArray())
+        : this(clock, DstPolicy.NextValid, hours)
     {
     }
 
     public LocalMultipleTimesTimer(IClock clock, DstPolicy policy, params int[] hours)
-        : this(clock, policy, hours.Select(h => new TimeOfDay(h, 0, 0)).ToArray())
+        : base(clock, policy)
     {
+        var timeOfDays = ConvertHoursToTimeOfDay(hours, nameof(hours));
+        _resetTimes = PrepareResetTimes(timeOfDays, nameof(hours));
     }
 
     public override DateTime NextResetUtc(DateTime lastUtc, TimeZoneInfo timeZone)
@@ -75,4 +71,31 @@ public sealed class LocalMultipleTimesTimer : LocalTimerBase
     /// 설정된 리셋 시각들
     /// </summary>
     public IReadOnlyList<TimeOfDay> ResetTimes => _resetTimes;
+
+    private static TimeOfDay[] PrepareResetTimes(TimeOfDay[] resetTimes, string parameterName)
+    {
+        if (resetTimes == null)
+            throw new ArgumentNullException(parameterName);
+
+        if (resetTimes.Length == 0)
+            throw new ArgumentException("At least one reset time must be specified.", parameterName);
+
+        var ordered = resetTimes.OrderBy(t => t).ToArray();
+
+        for (var i = 1; i < ordered.Length; i++)
+        {
+            if (ordered[i] == ordered[i - 1])
+                throw new ArgumentException("Reset times must be unique.", parameterName);
+        }
+
+        return ordered;
+    }
+
+    private static TimeOfDay[] ConvertHoursToTimeOfDay(int[] hours, string parameterName)
+    {
+        if (hours == null)
+            throw new ArgumentNullException(parameterName);
+
+        return hours.Select(h => new TimeOfDay(h, 0, 0)).ToArray();
+    }
 }

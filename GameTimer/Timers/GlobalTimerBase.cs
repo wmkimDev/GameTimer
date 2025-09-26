@@ -8,8 +8,20 @@ namespace GameTimer.Timers;
 /// </summary>
 public abstract class GlobalTimerBase : IGlobalTimer
 {
-    protected readonly IClock   Clock;
-    public             TimeSpan Latency { get; set; } = TimeSpan.FromSeconds(2);
+    private          TimeSpan _latency = TimeSpan.FromSeconds(2);
+    protected readonly IClock Clock;
+    
+    public TimeSpan Latency
+    {
+        get => _latency;
+        set
+        {
+            if (value < TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(value), "Latency must be non-negative");
+
+            _latency = value;
+        }
+    }
 
     protected GlobalTimerBase(IClock clock)
     {

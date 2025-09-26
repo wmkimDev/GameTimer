@@ -13,7 +13,7 @@ public sealed class LocalEveryWeekTimer : LocalTimerBase
 
     public LocalEveryWeekTimer(IClock clock, DayOfWeekFlag resetDays, TimeOfDay resetTime, DstPolicy policy = DstPolicy.NextValid) : base(clock, policy)
     {
-        if (resetDays == 0)
+        if (resetDays == DayOfWeekFlag.None)
             throw new ArgumentException("At least one day must be specified", nameof(resetDays));
             
         _resetDays = resetDays;

@@ -8,10 +8,22 @@ using GameTimer.Abstractions;
 /// </summary>
 public abstract class LocalTimerBase : ILocalTimer
 {
+    private           TimeSpan _latency = TimeSpan.FromSeconds(2);
     protected readonly IClock    Clock;
     protected readonly DstPolicy Policy;
-    public             TimeSpan  Latency { get; set; } = TimeSpan.FromSeconds(2);
     
+    public TimeSpan Latency
+    {
+        get => _latency;
+        set
+        {
+            if (value < TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(value), "Latency must be non-negative");
+
+            _latency = value;
+        }
+    }
+
     public DstPolicy CurrentPolicy => Policy;
 
     protected LocalTimerBase(IClock clock, DstPolicy policy = DstPolicy.NextValid)

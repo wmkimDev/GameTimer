@@ -13,7 +13,7 @@ public sealed class GlobalEveryWeekTimer : GlobalTimerBase
 
     public GlobalEveryWeekTimer(IClock clock, DayOfWeekFlag resetDays, TimeOfDay resetTimeUtc) : base(clock)
     {
-        if (resetDays == 0)
+        if (resetDays == DayOfWeekFlag.None)
             throw new ArgumentException("At least one day must be specified", nameof(resetDays));
             
         _resetDays    = resetDays;

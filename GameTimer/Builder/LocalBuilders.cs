@@ -53,6 +53,9 @@ public sealed class LocalDailyBuilder
 
     public LocalDailyBuilder WithLatency(TimeSpan latency)
     {
+        if (latency < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(latency), "Latency must be non-negative.");
+
         _latency = latency;
         return this;
     }
@@ -69,7 +72,7 @@ public sealed class LocalWeeklyBuilder
 {
     private readonly IClock _clock;
     private DstPolicy _policy;
-    private DayOfWeekFlag _days = 0;
+    private DayOfWeekFlag _days = DayOfWeekFlag.None;
     private TimeOfDay _time = new(0, 0, 0);
     private TimeSpan? _latency;
 
@@ -105,6 +108,9 @@ public sealed class LocalWeeklyBuilder
 
     public LocalWeeklyBuilder WithLatency(TimeSpan latency)
     {
+        if (latency < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(latency), "Latency must be non-negative.");
+
         _latency = latency;
         return this;
     }
@@ -163,6 +169,9 @@ public sealed class LocalMonthlyBuilder
 
     public LocalMonthlyBuilder WithLatency(TimeSpan latency)
     {
+        if (latency < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(latency), "Latency must be non-negative.");
+
         _latency = latency;
         return this;
     }
@@ -208,6 +217,9 @@ public sealed class LocalMultipleTimesBuilder
 
     public LocalMultipleTimesBuilder WithLatency(TimeSpan latency)
     {
+        if (latency < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(latency), "Latency must be non-negative.");
+
         _latency = latency;
         return this;
     }
