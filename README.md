@@ -121,7 +121,7 @@ UTC 기준 반복 구간을 정의합니다.
 using GameTimer.Schedules.Builders;
 
 var globalSchedule = GlobalSchedules.Daily(systemClock)
-    .AddWindow(9, 0)                     // 09:00 UTC, 기본 1시간
+    .AddWindow(9, 0, TimeSpan.FromHours(1))        // 09:00 UTC, 1시간 창
     .AddWindow(new TimeOfDay(18, 0), TimeSpan.FromHours(2))
     .Build();
 
@@ -133,11 +133,11 @@ var nextWindow = globalSchedule.GetNextWindow(DateTime.UtcNow);
 ```csharp
 var seoul = TimeZoneInfo.FindSystemTimeZoneById("Asia/Seoul");
 var localSchedule = LocalSchedules.Monthly(systemClock, seoul)
-    .LastDay()                // 말일
-    .At(6, 0, 0)              // 06:00 현지 시각
+    .LastDay()                                // 말일
+    .At(6, 0, 0, TimeSpan.FromHours(1))       // 06:00 현지 시각, 1시간 창
     .Build();
 ```
-`LocalSchedules.Monthly`는 `On(5).At(9, 0)`처럼 특정 일자/시각을 지정할 수도 있고, `.LastDay().At(...)`로 말일 동작을 간단히 정의할 수 있습니다.
+`LocalSchedules.Monthly`는 `On(5).At(9, 0, TimeSpan.FromHours(1))`처럼 특정 일자/시각과 창 길이를 지정할 수도 있고, `.LastDay().At(...)`로 말일 동작을 간단히 정의할 수 있습니다.
 
 ### One-time 스케줄
 ```csharp
@@ -166,7 +166,7 @@ foreach (var window in localSchedule.EnumerateWindows(fromUtc, toUtc))
 `EnumerateWindows`는 열린-닫힌 구간 `(fromUtc, toUtc]`에 해당하는 창만 돌려줍니다. 종료 시간이 시작 시간 이하이면 `ArgumentException`이 발생합니다.
 
 ## 예제 시나리오
-- **크리스마스 이벤트**: `LocalSchedules.Monthly(clock, tz).On(25).At(0, 0)` 혹은 `.LastDay()`를 사용해 반복 이벤트를 구성하고, 12월 기간만 열거하여 필요한 윈도우만 추출합니다.
+- **크리스마스 이벤트**: `LocalSchedules.Monthly(clock, tz).On(25).At(0, 0, TimeSpan.FromHours(1))` 혹은 `.LastDay()`를 사용해 반복 이벤트를 구성하고, 12월 기간만 열거하여 필요한 윈도우만 추출합니다.
 - **매일 다중 점검**: 글로벌/로컬 `MultipleTimes` 빌더로 하루 여러 시각에 점검을 등록합니다.
 - **DST 전환 검증**: `DstPolicy.ThrowException`을 사용해 문제 발생 시 즉시 감지하거나, `NextValid` 정책으로 안전하게 보정합니다.
 

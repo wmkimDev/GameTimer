@@ -32,11 +32,36 @@ public sealed class GlobalDailyScheduleBuilder
         return this;
     }
 
-    public GlobalDailyScheduleBuilder AddWindow(int hour, int minute = 0, int second = 0, TimeSpan? duration = null)
+    public GlobalDailyScheduleBuilder Clear()
     {
+        _windows.Clear();
+        return this;
+    }
+
+    public GlobalDailyScheduleBuilder AddWindows(IEnumerable<DailyWindowDefinition> windows)
+    {
+        if (windows == null) throw new ArgumentNullException(nameof(windows));
+
+        foreach (var window in windows)
+        {
+            _windows.Add(window);
+        }
+
+        return this;
+    }
+
+    public GlobalDailyScheduleBuilder AddWindow(int hour, TimeSpan duration)
+        => AddWindow(hour, 0, 0, duration);
+
+    public GlobalDailyScheduleBuilder AddWindow(int hour, int minute, TimeSpan duration)
+        => AddWindow(hour, minute, 0, duration);
+
+    public GlobalDailyScheduleBuilder AddWindow(int hour, int minute, int second, TimeSpan duration)
+    {
+        if (duration <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(duration), "Duration must be positive.");
         var start = new TimeOfDay(hour, minute, second);
-        var dur   = duration ?? TimeSpan.FromHours(1);
-        return AddWindow(start, dur);
+        return AddWindow(start, duration);
     }
 
     public IGlobalSchedule Build()
@@ -61,11 +86,36 @@ public sealed class GlobalWeeklyScheduleBuilder
         return this;
     }
 
-    public GlobalWeeklyScheduleBuilder AddWindow(DayOfWeekFlag days, int hour, int minute = 0, int second = 0, TimeSpan? duration = null)
+    public GlobalWeeklyScheduleBuilder Clear()
     {
+        _definitions.Clear();
+        return this;
+    }
+
+    public GlobalWeeklyScheduleBuilder AddWindows(IEnumerable<WeeklyWindowDefinition> definitions)
+    {
+        if (definitions == null) throw new ArgumentNullException(nameof(definitions));
+
+        foreach (var definition in definitions)
+        {
+            _definitions.Add(definition);
+        }
+
+        return this;
+    }
+
+    public GlobalWeeklyScheduleBuilder AddWindow(DayOfWeekFlag days, int hour, TimeSpan duration)
+        => AddWindow(days, hour, 0, 0, duration);
+
+    public GlobalWeeklyScheduleBuilder AddWindow(DayOfWeekFlag days, int hour, int minute, TimeSpan duration)
+        => AddWindow(days, hour, minute, 0, duration);
+
+    public GlobalWeeklyScheduleBuilder AddWindow(DayOfWeekFlag days, int hour, int minute, int second, TimeSpan duration)
+    {
+        if (duration <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(duration), "Duration must be positive.");
         var start = new TimeOfDay(hour, minute, second);
-        var dur   = duration ?? TimeSpan.FromHours(1);
-        return AddWindow(days, start, dur);
+        return AddWindow(days, start, duration);
     }
 
     public IGlobalSchedule Build()
@@ -90,11 +140,36 @@ public sealed class GlobalMonthlyScheduleBuilder
         return this;
     }
 
-    public GlobalMonthlyScheduleBuilder AddWindow(int dayOfMonth, int hour, int minute = 0, int second = 0, TimeSpan? duration = null)
+    public GlobalMonthlyScheduleBuilder Clear()
     {
+        _definitions.Clear();
+        return this;
+    }
+
+    public GlobalMonthlyScheduleBuilder AddWindows(IEnumerable<MonthlyWindowDefinition> definitions)
+    {
+        if (definitions == null) throw new ArgumentNullException(nameof(definitions));
+
+        foreach (var definition in definitions)
+        {
+            _definitions.Add(definition);
+        }
+
+        return this;
+    }
+
+    public GlobalMonthlyScheduleBuilder AddWindow(int dayOfMonth, int hour, TimeSpan duration)
+        => AddWindow(dayOfMonth, hour, 0, 0, duration);
+
+    public GlobalMonthlyScheduleBuilder AddWindow(int dayOfMonth, int hour, int minute, TimeSpan duration)
+        => AddWindow(dayOfMonth, hour, minute, 0, duration);
+
+    public GlobalMonthlyScheduleBuilder AddWindow(int dayOfMonth, int hour, int minute, int second, TimeSpan duration)
+    {
+        if (duration <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(duration), "Duration must be positive.");
         var start = new TimeOfDay(hour, minute, second);
-        var dur   = duration ?? TimeSpan.FromHours(1);
-        return AddWindow(dayOfMonth, start, dur);
+        return AddWindow(dayOfMonth, start, duration);
     }
 
     public GlobalMonthlyScheduleDayBuilder On(int dayOfMonth)
@@ -124,11 +199,18 @@ public sealed class GlobalMonthlyScheduleBuilder
             return _parent.AddWindow(_dayOfMonth, start, duration);
         }
 
-        public GlobalMonthlyScheduleBuilder At(int hour, int minute = 0, int second = 0, TimeSpan? duration = null)
+        public GlobalMonthlyScheduleBuilder At(int hour, TimeSpan duration)
+            => At(hour, 0, 0, duration);
+
+        public GlobalMonthlyScheduleBuilder At(int hour, int minute, TimeSpan duration)
+            => At(hour, minute, 0, duration);
+
+        public GlobalMonthlyScheduleBuilder At(int hour, int minute, int second, TimeSpan duration)
         {
+            if (duration <= TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(duration), "Duration must be positive.");
             var start = new TimeOfDay(hour, minute, second);
-            var dur   = duration ?? TimeSpan.FromHours(1);
-            return At(start, dur);
+            return At(start, duration);
         }
     }
 }

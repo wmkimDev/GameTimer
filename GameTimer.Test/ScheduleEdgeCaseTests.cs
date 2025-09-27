@@ -62,7 +62,7 @@ public class ScheduleEdgeCaseTests
         var clock = new FixedClock(TestHelpers.Utc(2025, 1, 1));
         var schedule = LocalSchedules
             .Monthly(clock, SeoulTz)
-            .LastDay().At(8, 0, 0)
+            .LastDay().At(8, 0, 0, TimeSpan.FromHours(1))
             .Build();
 
         var fromUtc = TestHelpers.Utc(2025, 1, 1);

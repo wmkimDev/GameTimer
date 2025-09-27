@@ -60,9 +60,9 @@ foreach (var window in daily.EnumerateWindows(start, end))
 ## 말일/여러 일자 조합
 ```csharp
 var monthly = LocalSchedules.Monthly(clock, tz)
-    .On(5).At(9, 0)
-    .On(20).At(18, 0)
-    .LastDay().At(6, 0)
+    .On(5).At(9, 0, TimeSpan.FromHours(1))
+    .On(20).At(18, 0, TimeSpan.FromHours(1))
+    .LastDay().At(6, 0, TimeSpan.FromHours(1))
     .Build();
 ```
 스케줄 빌더는 내부적으로 창 목록을 정렬하여 `GetNextWindow` 호출 시 불필요한 정렬 비용이 들지 않도록 합니다.
